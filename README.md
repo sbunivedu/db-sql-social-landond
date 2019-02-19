@@ -27,6 +27,11 @@ directed red edges indicate that one student likes another student.
 
 ## Write queries
 1. Find the names of all students who are friends with someone named Gabriel.
+```sql
+SELECT h.name 
+FROM Highschooler h, Friend f, Highschooler h2
+WHERE f.ID1 = h.ID AND f.ID2 = h2.ID AND h2.name = "Gabriel";
+```
 ```
 Expected output:
 +-----------+
@@ -41,6 +46,12 @@ Expected output:
 ```
 2. Find all students who do not appear in the Likes table (as a student who
   likes or is liked) and return their names and grades.
+```sql
+SELECT h.name, h.grade
+FROM Highschooler h
+WHERE NOT EXISTS (SELECT * FROM Likes l WHERE h.ID = l.ID1 OR h.ID = l.ID2);
+
+```
 ```
 Expected output:
 +---------+-------+
@@ -54,6 +65,14 @@ Expected output:
 ```
 3. (*) Find the name and grade of all students who are liked by more than one
   other student.
+```sql
+SELECT name, grade
+FROM Highschooler h, Likes l 
+WHERE h.ID = l.ID2 
+GROUP BY ID2
+HAVING COUNT(*) > 1; 
+
+```
 ```
 Expected output:
 +-----------+-------+
@@ -69,6 +88,12 @@ Expected output:
   name and grade of the student they like. Note that your conditions in the
   where clause can include any arithmetic expressions, e.g. (a-b > 10) AND
   (c < d*2).
+
+```sql
+SELECT h1.name, h1.grade, h2.name, h2.grade
+FROM Highschooler h1, Highschooler h2, Likes l 
+WHERE h1.ID = l.ID1 AND h2.ID = l.ID2 and h1.grade - h2.grade >= 2; 
+```
 ```
 Expected output:
 +------+-------+-------+-------+
@@ -196,7 +221,7 @@ mysql> select * from Likes;
 | 1316 | 1304 |
 | 1501 | 1934 |
 | 1934 | 1501 |
-| 1025 | 1101 |
+| 1025 |se |
 +------+------+
 10 rows in set (0.00 sec)
 
